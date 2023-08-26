@@ -8,12 +8,14 @@ class Signup extends StatefulWidget {
 }
 
 class _Signup extends State<Signup> {
-  final idController = TextEditingController();
+  final nameController = TextEditingController();
+  final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
   @override
   void dispose() {
-    idController.dispose();
+    nameController.dispose();
+    emailController.dispose();
     passwordController.dispose();
     super.dispose();
   }
@@ -31,9 +33,16 @@ class _Signup extends State<Signup> {
           children: [
             TextFormField(
                 style: TextStyle(decorationThickness: 0),
-                controller: idController,
+                autofocus: true,
+                controller: nameController,
+                onEditingComplete: () => {print('edit 끝남')},
                 decoration: const InputDecoration(
-                    border: UnderlineInputBorder(), labelText: '아이디')),
+                    border: UnderlineInputBorder(), labelText: '이름')),
+            TextFormField(
+                style: TextStyle(decorationThickness: 0),
+                controller: emailController,
+                decoration: const InputDecoration(
+                    border: UnderlineInputBorder(), labelText: '이메일')),
             TextFormField(
                 controller: passwordController,
                 decoration: const InputDecoration(

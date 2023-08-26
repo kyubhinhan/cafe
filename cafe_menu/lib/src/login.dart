@@ -34,7 +34,9 @@ class _Login extends State<Login> {
                 style: TextStyle(decorationThickness: 0),
                 controller: idController,
                 decoration: const InputDecoration(
-                    border: UnderlineInputBorder(), labelText: '아이디')),
+                  border: UnderlineInputBorder(),
+                  labelText: '이메일',
+                )),
             TextFormField(
                 controller: passwordController,
                 decoration: const InputDecoration(
