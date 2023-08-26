@@ -2,15 +2,9 @@ import express, { Express, Request, Response } from "express";
 import { checkEmailExist, checkPasswordToEmail } from "@/loginUtil";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { auth, AuthedRequest } from "./authMiddleware";
 
 dotenv.config();
 const router = express.Router();
-
-router.get("/test", auth, (req: AuthedRequest, res) => {
-  const decoded = req.decoded;
-  res.json({ decoded });
-});
 
 router.get("/", (req, res) => {
   res.send("you get into login haha");
