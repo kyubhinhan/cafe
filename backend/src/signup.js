@@ -21,7 +21,7 @@ router.get("/", (req, res) => {
     res.send("you get into signup router");
 });
 router.get("/check-duplicate/:email", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield (0, loginUtil_1.checkDuplicateEmail)(req.params.email);
+    const result = yield (0, loginUtil_1.checkEmailExist)(req.params.email);
     res.send(result);
 }));
 // 회원 가입
@@ -31,8 +31,8 @@ router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(400).json({ message: "invalid request" });
         return;
     }
-    const isDuplicated = yield (0, loginUtil_1.checkDuplicateEmail)(email);
-    if (isDuplicated) {
+    const isExist = yield (0, loginUtil_1.checkEmailExist)(email);
+    if (isExist) {
         res.status(400).json({ message: "duplicated email" });
     }
     const type = (0, loginUtil_1.checkMasterEmail)(email) ? "manager" : "user";

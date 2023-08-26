@@ -9,16 +9,27 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkMasterEmail = exports.checkDuplicateEmail = void 0;
+exports.checkMasterEmail = exports.checkEmailExist = exports.checkPasswordToEmail = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
-function checkDuplicateEmail(email) {
+function checkEmailExist(email) {
     return __awaiter(this, void 0, void 0, function* () {
-        const duplicatedEmail = yield prisma.user.findUnique({ where: { email } });
-        return duplicatedEmail ? true : false;
+        const existEmail = yield prisma.user.findUnique({ where: { email } });
+        return existEmail ? true : false;
     });
 }
-exports.checkDuplicateEmail = checkDuplicateEmail;
+exports.checkEmailExist = checkEmailExist;
+function checkPasswordToEmail(email, password) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const user = yield prisma.user.findUnique({
+            where: { email },
+        });
+        if (!user)
+            return false;
+        return user.password === password;
+    });
+}
+exports.checkPasswordToEmail = checkPasswordToEmail;
 function checkMasterEmail(email) {
     return email == "master@gmail.com";
 }

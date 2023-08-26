@@ -1,8 +1,6 @@
 import express, { Express, Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
-import { checkEmailExist } from "@/loginUtil";
+import { checkEmailExist, checkPasswordToEmail } from "@/loginUtil";
 
-const prisma = new PrismaClient();
 const router = express.Router();
 
 router.get("/", (req, res) => {
@@ -21,6 +19,14 @@ router.post("/", async (req, res) => {
     res.status(400).json({ message: "email not found" });
     return;
   }
+
+  const isCorrectUser = await checkPasswordToEmail(email, password);
+  if (!isCorrectUser) {
+    res.status(400).json({ message: "password not match" });
+    return;
+  }
+
+  res.json({ message: "login ok" });
 });
 
 export default router;

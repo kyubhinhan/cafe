@@ -6,8 +6,17 @@ async function checkEmailExist(email: string) {
   return existEmail ? true : false;
 }
 
+async function checkPasswordToEmail(email: string, password: string) {
+  const user = await prisma.user.findUnique({
+    where: { email },
+  });
+
+  if (!user) return false;
+  return user.password === password;
+}
+
 function checkMasterEmail(email: string) {
   return email == "master@gmail.com";
 }
 
-export { checkEmailExist, checkMasterEmail };
+export { checkPasswordToEmail, checkEmailExist, checkMasterEmail };
