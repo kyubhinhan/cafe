@@ -1,6 +1,6 @@
 import express, { Express, Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
-import { checkDuplicateEmail, checkMasterEmail } from "@/loginUtil";
+import { checkEmailExist, checkMasterEmail } from "@/loginUtil";
 
 const prisma = new PrismaClient();
 const router = express.Router();
@@ -10,7 +10,7 @@ router.get("/", (req, res) => {
 });
 
 router.get("/check-duplicate/:email", async (req, res) => {
-  const result = await checkDuplicateEmail(req.params.email);
+  const result = await checkEmailExist(req.params.email);
   res.send(result);
 });
 
@@ -23,8 +23,8 @@ router.post("/", async (req, res) => {
     return;
   }
 
-  const isDuplicated = await checkDuplicateEmail(email);
-  if (isDuplicated) {
+  const isExist = await checkEmailExist(email);
+  if (isExist) {
     res.status(400).json({ message: "duplicated email" });
   }
 
