@@ -13,10 +13,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const client_1 = require("@prisma/client");
 const loginUtil_1 = require("@/loginUtil");
-const prisma = new client_1.PrismaClient();
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const dotenv_1 = __importDefault(require("dotenv"));
+const authMiddleware_1 = require("./authMiddleware");
+dotenv_1.default.config();
 const router = express_1.default.Router();
+router.get("/test", authMiddleware_1.auth, (req, res) => {
+    const decoded = req.decoded;
+    res.json({ decoded });
+});
 router.get("/", (req, res) => {
     res.send("you get into login haha");
 });
@@ -36,6 +42,10 @@ router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(400).json({ message: "password not match" });
         return;
     }
-    res.json({ message: "login ok" });
+    const key = String(process.env.SECRET_KEY);
+    const token = jsonwebtoken_1.default.sign({ type: "JWT", email }, key, { expiresIn: "3h" });
+    res.json({
+        token,
+    });
 }));
 exports.default = router;
