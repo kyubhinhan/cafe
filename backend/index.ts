@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import express, { Express, Request, Response } from "express";
-import loginRouter from "./src/login";
-import signupRouter from "./src/signup";
+import loginRouter from "@/login";
+import signupRouter from "@/signup";
 
 const prisma = new PrismaClient();
 const app: Express = express();

@@ -1,5 +1,6 @@
 import express, { Express, Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import { checkDuplicateEmail, checkMasterEmail } from "@/loginUtil";
 
 const prisma = new PrismaClient();
 const router = express.Router();
@@ -38,14 +39,5 @@ router.post("/", async (req, res) => {
   });
   res.json(newUser);
 });
-
-async function checkDuplicateEmail(email: string) {
-  const duplicatedEmail = await prisma.user.findUnique({ where: { email } });
-  return duplicatedEmail ? true : false;
-}
-
-function checkMasterEmail(email: string) {
-  return email == "master@gmail.com";
-}
 
 export default router;

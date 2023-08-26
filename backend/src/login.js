@@ -8,6 +8,12 @@ const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const router = express_1.default.Router();
 router.get("/", (req, res) => {
-    res.send("you get into login router");
+    res.send("you get into login haha");
+});
+router.post("/", (req, res) => {
+    const { email, password } = req.body;
+    if (!email || !password) {
+        res.status(400).json({ message: "empty email or password" });
+    }
 });
 exports.default = router;
