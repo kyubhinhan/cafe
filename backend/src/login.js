@@ -4,6 +4,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const client_1 = require("@prisma/client");
+const prisma = new client_1.PrismaClient();
 const router = express_1.default.Router();
 router.get("/", (req, res) => {
     res.send("you get into login router");

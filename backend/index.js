@@ -6,13 +6,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const client_1 = require("@prisma/client");
 const express_1 = __importDefault(require("express"));
 const login_1 = __importDefault(require("./src/login"));
+const signup_1 = __importDefault(require("./src/signup"));
 const prisma = new client_1.PrismaClient();
 const app = (0, express_1.default)();
 const port = 5000;
 app.get("/", (req, res) => {
     res.send("Typescript + Node.js + express + prisma + supabase");
 });
+app.use(express_1.default.json());
 app.use("/login", login_1.default);
+app.use("/signup", signup_1.default);
 app.listen(port, () => {
     console.log(`[server]: Server is running at <https://localhost>:${port}`);
 });
