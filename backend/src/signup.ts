@@ -13,12 +13,20 @@ router.get("/check-duplicate/:email", async (req, res) => {
   res.send(result);
 });
 
+// 회원 가입
 router.post("/", async (req, res) => {
   const { email, password, name } = req.body;
+
+  if (!email || !password || !name) {
+    res.status(400).json({ message: "invalid request" });
+    return;
+  }
+
   const isDuplicated = await checkDuplicateEmail(email);
   if (isDuplicated) {
     res.status(400).json({ message: "duplicated email" });
   }
+
   const type = checkMasterEmail(email) ? "manager" : "user";
   const newUser = await prisma.user.create({
     data: {

@@ -24,12 +24,34 @@ router.get("/check-duplicate/:email", (req, res) => __awaiter(void 0, void 0, vo
     res.send(result);
 }));
 router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { email, password } = req.body;
+    const { email, password, name } = req.body;
+    if (!email || !password || !name) {
+        res.status(400).json({ message: "invalid request" });
+        return;
+    }
+    console.log(req.body);
+    const isDuplicated = yield checkDuplicateEmail(email);
+    if (isDuplicated) {
+        res.status(400).json({ message: "duplicated email" });
+    }
+    const type = checkMasterEmail(email) ? "manager" : "user";
+    const newUser = yield prisma.user.create({
+        data: {
+            email,
+            password,
+            name,
+            type,
+        },
+    });
+    res.json(newUser);
 }));
 function checkDuplicateEmail(email) {
     return __awaiter(this, void 0, void 0, function* () {
         const duplicatedEmail = yield prisma.user.findUnique({ where: { email } });
         return duplicatedEmail ? true : false;
     });
+}
+function checkMasterEmail(email) {
+    return email == "master@gmail.com";
 }
 exports.default = router;
