@@ -1,5 +1,6 @@
-import 'dart:ffi';
+import 'dart:convert';
 
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
 class Signup extends StatefulWidget {
@@ -48,7 +49,7 @@ class _Signup extends State<Signup> {
                       border: UnderlineInputBorder(), labelText: '이메일')),
               onFocusChange: (hasFocus) {
                 if (!hasFocus) {
-                  print('focus out');
+                  print(fetchEmail(emailController.text));
                 }
               },
             ),
@@ -67,5 +68,26 @@ class _Signup extends State<Signup> {
         ),
       ),
     );
+  }
+}
+
+Future<Email> fetchEmail(email) async {
+  final response = await http
+      .get(Uri.parse('http://10.0.2.2/signup/duplicate?email=$email'));
+
+  if (response.statusCode == 200) {
+    return Email.fromJson(jsonDecode(response.body));
+  } else {
+    throw Exception('Failed to load Email');
+  }
+}
+
+class Email {
+  final String email;
+
+  const Email({required this.email});
+
+  factory Email.fromJson(Map<String, dynamic> json) {
+    return Email(email: json['email']);
   }
 }

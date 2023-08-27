@@ -20,9 +20,11 @@ const router = express_1.default.Router();
 router.get("/", (req, res) => {
     res.send("you get into signup router");
 });
-router.get("/check-duplicate/:email", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield (0, loginUtil_1.checkEmailExist)(req.params.email);
-    res.send(result);
+router.get("/duplicate", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    res.send(req.query.email);
+    return;
+    // const result = await checkEmailExist(req.params.email);
+    // res.send(result);
 }));
 // 회원 가입
 router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {

@@ -16,13 +16,8 @@ const express_1 = __importDefault(require("express"));
 const loginUtil_1 = require("@/loginUtil");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const dotenv_1 = __importDefault(require("dotenv"));
-const authMiddleware_1 = require("./authMiddleware");
 dotenv_1.default.config();
 const router = express_1.default.Router();
-router.get("/test", authMiddleware_1.auth, (req, res) => {
-    const decoded = req.decoded;
-    res.json({ decoded });
-});
 router.get("/", (req, res) => {
     res.send("you get into login haha");
 });

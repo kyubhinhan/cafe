@@ -9,9 +9,11 @@ router.get("/", (req, res) => {
   res.send("you get into signup router");
 });
 
-router.get("/check-duplicate/:email", async (req, res) => {
-  const result = await checkEmailExist(req.params.email);
-  res.send(result);
+router.get("/duplicate", async (req, res) => {
+  res.send(req.query.email);
+  return;
+  // const result = await checkEmailExist(req.params.email);
+  // res.send(result);
 });
 
 // 회원 가입
