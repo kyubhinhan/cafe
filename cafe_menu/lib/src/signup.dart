@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 
 class Signup extends StatefulWidget {
@@ -11,6 +13,7 @@ class _Signup extends State<Signup> {
   final nameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  late dynamic emailValid;
 
   @override
   void dispose() {
@@ -35,14 +38,20 @@ class _Signup extends State<Signup> {
                 style: TextStyle(decorationThickness: 0),
                 autofocus: true,
                 controller: nameController,
-                onEditingComplete: () => {print('edit 끝남')},
                 decoration: const InputDecoration(
                     border: UnderlineInputBorder(), labelText: '이름')),
-            TextFormField(
-                style: TextStyle(decorationThickness: 0),
-                controller: emailController,
-                decoration: const InputDecoration(
-                    border: UnderlineInputBorder(), labelText: '이메일')),
+            Focus(
+              child: TextFormField(
+                  style: TextStyle(decorationThickness: 0),
+                  controller: emailController,
+                  decoration: const InputDecoration(
+                      border: UnderlineInputBorder(), labelText: '이메일')),
+              onFocusChange: (hasFocus) {
+                if (!hasFocus) {
+                  print('focus out');
+                }
+              },
+            ),
             TextFormField(
                 controller: passwordController,
                 decoration: const InputDecoration(
