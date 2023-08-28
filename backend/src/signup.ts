@@ -10,10 +10,9 @@ router.get("/", (req, res) => {
 });
 
 router.get("/duplicate", async (req, res) => {
-  res.send(req.query.email);
-  return;
-  // const result = await checkEmailExist(req.params.email);
-  // res.send(result);
+  const result = await checkEmailExist(String(req.query.email));
+  console.log("enter duplicate");
+  res.json({ isDuplicate: result });
 });
 
 // 회원 가입

@@ -21,10 +21,9 @@ router.get("/", (req, res) => {
     res.send("you get into signup router");
 });
 router.get("/duplicate", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    res.send(req.query.email);
-    return;
-    // const result = await checkEmailExist(req.params.email);
-    // res.send(result);
+    const result = yield (0, loginUtil_1.checkEmailExist)(String(req.query.email));
+    console.log("enter duplicate");
+    res.json({ isDuplicate: result });
 }));
 // 회원 가입
 router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {

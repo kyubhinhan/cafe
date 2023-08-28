@@ -14,7 +14,8 @@ class _Signup extends State<Signup> {
   final nameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  late dynamic emailValid;
+  late Future<Duplicate> emailValid;
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
@@ -22,6 +23,12 @@ class _Signup extends State<Signup> {
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    emailValid = checkDuplicate('dd');
   }
 
   @override
@@ -41,16 +48,40 @@ class _Signup extends State<Signup> {
                 controller: nameController,
                 decoration: const InputDecoration(
                     border: UnderlineInputBorder(), labelText: '이름')),
-            Focus(
-              child: TextFormField(
-                  style: TextStyle(decorationThickness: 0),
-                  controller: emailController,
-                  decoration: const InputDecoration(
-                      border: UnderlineInputBorder(), labelText: '이메일')),
-              onFocusChange: (hasFocus) {
-                if (!hasFocus) {
-                  print(fetchEmail(emailController.text));
+            FutureBuilder<Duplicate>(
+              future: emailValid,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Form(
+                    key: _formKey,
+                    child: Focus(
+                      child: TextFormField(
+                        style: TextStyle(decorationThickness: 0),
+                        controller: emailController,
+                        decoration: const InputDecoration(
+                            border: UnderlineInputBorder(), labelText: '이메일'),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter some text';
+                          }
+                          if (snapshot.data!.isDuplicate) {
+                            return '중복된 이메일입니다.';
+                          }
+                          return null;
+                        },
+                      ),
+                      onFocusChange: (hasFocus) {
+                        if (!hasFocus) {
+                          checkDuplicate(emailController.text);
+                        }
+                      },
+                    ),
+                  );
+                } else if (snapshot.hasError) {
+                  return Text('${snapshot.error}');
                 }
+                // By default, show a loading spinner.
+                return const CircularProgressIndicator();
               },
             ),
             TextFormField(
@@ -71,23 +102,23 @@ class _Signup extends State<Signup> {
   }
 }
 
-Future<Email> fetchEmail(email) async {
+Future<Duplicate> checkDuplicate(email) async {
   final response = await http
-      .get(Uri.parse('http://10.0.2.2/signup/duplicate?email=$email'));
+      .get(Uri.parse('http://10.0.2.2:5000/signup/duplicate?email=$email'));
 
   if (response.statusCode == 200) {
-    return Email.fromJson(jsonDecode(response.body));
+    return Duplicate.fromJson(jsonDecode(response.body));
   } else {
-    throw Exception('Failed to load Email');
+    throw Exception('Failed to check duplicate');
   }
 }
 
-class Email {
-  final String email;
+class Duplicate {
+  final bool isDuplicate;
 
-  const Email({required this.email});
+  const Duplicate({required this.isDuplicate});
 
-  factory Email.fromJson(Map<String, dynamic> json) {
-    return Email(email: json['email']);
+  factory Duplicate.fromJson(Map<String, dynamic> json) {
+    return Duplicate(isDuplicate: json['isDuplicate']);
   }
 }
