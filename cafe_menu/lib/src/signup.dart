@@ -14,8 +14,8 @@ class _Signup extends State<Signup> {
   final nameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  late Future<Duplicate> emailValid;
   final _formKey = GlobalKey<FormState>();
+  var emailDuplicated = false;
 
   @override
   void dispose() {
@@ -23,12 +23,6 @@ class _Signup extends State<Signup> {
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    emailValid = checkDuplicate('dd');
   }
 
   @override
@@ -60,12 +54,21 @@ class _Signup extends State<Signup> {
                     if (value == null || value.isEmpty) {
                       return 'Please enter some text';
                     }
+                    if (emailDuplicated) {
+                      return '중복된 이메일입니다.';
+                    }
                     return null;
                   },
                 ),
-                onFocusChange: (hasFocus) {
+                onFocusChange: (hasFocus) async {
                   if (!hasFocus) {
-                    checkDuplicate(emailController.text);
+                    var duplicated = await checkDuplicate(emailController.text);
+                    setState(() {
+                      emailDuplicated = duplicated;
+                    });
+                    if (_formKey.currentState!.validate()) {
+                      print('valid');
+                    }
                   }
                 },
               ),
@@ -88,12 +91,12 @@ class _Signup extends State<Signup> {
   }
 }
 
-Future<Duplicate> checkDuplicate(email) async {
+Future<bool> checkDuplicate(email) async {
   final response = await http
       .get(Uri.parse('http://10.0.2.2:5000/signup/duplicate?email=$email'));
 
   if (response.statusCode == 200) {
-    return Duplicate.fromJson(jsonDecode(response.body));
+    return Duplicate.fromJson(jsonDecode(response.body)).isDuplicate;
   } else {
     throw Exception('Failed to check duplicate');
   }
