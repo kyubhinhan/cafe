@@ -48,41 +48,27 @@ class _Signup extends State<Signup> {
                 controller: nameController,
                 decoration: const InputDecoration(
                     border: UnderlineInputBorder(), labelText: '이름')),
-            FutureBuilder<Duplicate>(
-              future: emailValid,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return Form(
-                    key: _formKey,
-                    child: Focus(
-                      child: TextFormField(
-                        style: TextStyle(decorationThickness: 0),
-                        controller: emailController,
-                        decoration: const InputDecoration(
-                            border: UnderlineInputBorder(), labelText: '이메일'),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter some text';
-                          }
-                          if (snapshot.data!.isDuplicate) {
-                            return '중복된 이메일입니다.';
-                          }
-                          return null;
-                        },
-                      ),
-                      onFocusChange: (hasFocus) {
-                        if (!hasFocus) {
-                          checkDuplicate(emailController.text);
-                        }
-                      },
-                    ),
-                  );
-                } else if (snapshot.hasError) {
-                  return Text('${snapshot.error}');
-                }
-                // By default, show a loading spinner.
-                return const CircularProgressIndicator();
-              },
+            Form(
+              key: _formKey,
+              child: Focus(
+                child: TextFormField(
+                  style: TextStyle(decorationThickness: 0),
+                  controller: emailController,
+                  decoration: const InputDecoration(
+                      border: UnderlineInputBorder(), labelText: '이메일'),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter some text';
+                    }
+                    return null;
+                  },
+                ),
+                onFocusChange: (hasFocus) {
+                  if (!hasFocus) {
+                    checkDuplicate(emailController.text);
+                  }
+                },
+              ),
             ),
             TextFormField(
                 controller: passwordController,
