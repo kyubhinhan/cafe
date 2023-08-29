@@ -81,7 +81,21 @@ class _Signup extends State<Signup> {
             SizedBox(height: 20),
             ElevatedButton(
               style: style,
-              onPressed: () {},
+              onPressed: () async {
+                print(nameController.text);
+                final response = await http.post(
+                  Uri.parse("http://10.0.2.2:5000/signup"),
+                  headers: <String, String>{
+                    'Content-Type': 'application/json',
+                  },
+                  body: jsonEncode({
+                    "name": nameController.text,
+                    "email": emailController.text,
+                    "password": passwordController.text,
+                  }),
+                );
+                if (response.statusCode == 200) {}
+              },
               child: const Text('회원 가입'),
             ),
           ],
