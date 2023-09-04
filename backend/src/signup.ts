@@ -17,7 +17,9 @@ router.get("/duplicate", async (req, res) => {
 
 // 회원 가입
 router.post("/", async (req, res) => {
-  const { email, password, name } = req.body;
+  const { uid, email, password, name } = req.body;
+
+  console.log(uid, email, password, name);
 
   if (!email || !password || !name) {
     res.status(400).json({ message: "invalid request" });
@@ -32,6 +34,7 @@ router.post("/", async (req, res) => {
   const type = checkMasterEmail(email) ? "manager" : "user";
   const newUser = await prisma.user.create({
     data: {
+      id: uid,
       email,
       password,
       name,
