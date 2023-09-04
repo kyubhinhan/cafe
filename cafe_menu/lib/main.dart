@@ -2,8 +2,16 @@ import 'package:flutter/material.dart';
 import 'src/login.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() => runApp(const CafeMenuApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  runApp(CafeMenuApp());
+}
 
 class CafeMenuApp extends StatelessWidget {
   const CafeMenuApp({super.key});

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../src/signup.dart';
+import 'package:cafe_menu/auth.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -22,6 +23,7 @@ class _Login extends State<Login> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
+    final AuthService auth = AuthService();
     final ButtonStyle style =
         ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 20));
     return Center(
@@ -45,7 +47,11 @@ class _Login extends State<Login> {
             SizedBox(height: 20),
             ElevatedButton(
               style: style,
-              onPressed: () {},
+              onPressed: () async {
+                dynamic credencial = await auth.signInWithEmailPassword(
+                    idController.text, passwordController.text);
+                print(credencial);
+              },
               child: const Text('로그인'),
             ),
             SizedBox(height: 10),

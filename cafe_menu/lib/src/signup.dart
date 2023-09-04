@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:cafe_menu/auth.dart';
 
 class Signup extends StatefulWidget {
   const Signup({super.key});
@@ -27,6 +28,7 @@ class _Signup extends State<Signup> {
 
   @override
   Widget build(BuildContext context) {
+    final AuthService auth = AuthService();
     double screenWidth = MediaQuery.of(context).size.width;
     final ButtonStyle style =
         ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 20));
@@ -82,19 +84,11 @@ class _Signup extends State<Signup> {
             ElevatedButton(
               style: style,
               onPressed: () async {
-                print(nameController.text);
-                final response = await http.post(
-                  Uri.parse("http://10.0.2.2:5000/signup"),
-                  headers: <String, String>{
-                    'Content-Type': 'application/json',
-                  },
-                  body: jsonEncode({
-                    "name": nameController.text,
-                    "email": emailController.text,
-                    "password": passwordController.text,
-                  }),
-                );
-                if (response.statusCode == 200) {}
+                dynamic user = auth.signUpWithEmailPassword(
+                    emailController.text, passwordController.text);
+                if (user != null) {
+                  print("signup");
+                }
               },
               child: const Text('회원 가입'),
             ),
