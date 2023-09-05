@@ -28,7 +28,6 @@ router.get("/duplicate", (req, res) => __awaiter(void 0, void 0, void 0, functio
 // 회원 가입
 router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { uid, email, password, name } = req.body;
-    console.log(uid, email, password, name);
     if (!email || !password || !name) {
         res.status(400).json({ message: "invalid request" });
         return;

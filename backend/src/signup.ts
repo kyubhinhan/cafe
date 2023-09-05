@@ -19,8 +19,6 @@ router.get("/duplicate", async (req, res) => {
 router.post("/", async (req, res) => {
   const { uid, email, password, name } = req.body;
 
-  console.log(uid, email, password, name);
-
   if (!email || !password || !name) {
     res.status(400).json({ message: "invalid request" });
     return;

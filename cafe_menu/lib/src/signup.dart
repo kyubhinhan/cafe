@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:cafe_menu/auth.dart';
+import 'package:go_router/go_router.dart';
 
 class Signup extends StatefulWidget {
   const Signup({super.key});
@@ -32,72 +33,79 @@ class _Signup extends State<Signup> {
     double screenWidth = MediaQuery.of(context).size.width;
     final ButtonStyle style =
         ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 20));
-    return Center(
-      child: SizedBox(
-        width: screenWidth * 0.8,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextFormField(
-                style: TextStyle(decorationThickness: 0),
-                autofocus: true,
-                controller: nameController,
-                decoration: const InputDecoration(
-                    border: UnderlineInputBorder(), labelText: '이름')),
-            Form(
-              key: _formKey,
-              child: Focus(
-                child: TextFormField(
+    return Scaffold(
+      appBar: AppBar(title: const Text('회원가입')),
+      body: Center(
+        child: SizedBox(
+          width: screenWidth * 0.8,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextFormField(
                   style: TextStyle(decorationThickness: 0),
-                  controller: emailController,
+                  autofocus: true,
+                  controller: nameController,
                   decoration: const InputDecoration(
-                      border: UnderlineInputBorder(), labelText: '이메일'),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter some text';
+                      border: UnderlineInputBorder(), labelText: '이름')),
+              Form(
+                key: _formKey,
+                child: Focus(
+                  child: TextFormField(
+                    style: TextStyle(decorationThickness: 0),
+                    controller: emailController,
+                    decoration: const InputDecoration(
+                        border: UnderlineInputBorder(), labelText: '이메일'),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter some text';
+                      }
+                      if (emailDuplicated) {
+                        return '중복된 이메일입니다.';
+                      }
+                      return null;
+                    },
+                  ),
+                  onFocusChange: (hasFocus) async {
+                    if (!hasFocus) {
+                      var duplicated =
+                          await checkDuplicate(emailController.text);
+                      setState(() {
+                        emailDuplicated = duplicated;
+                      });
+                      if (_formKey.currentState!.validate()) {
+                        print('valid');
+                      }
                     }
-                    if (emailDuplicated) {
-                      return '중복된 이메일입니다.';
-                    }
-                    return null;
                   },
                 ),
-                onFocusChange: (hasFocus) async {
-                  if (!hasFocus) {
-                    var duplicated = await checkDuplicate(emailController.text);
-                    setState(() {
-                      emailDuplicated = duplicated;
-                    });
-                    if (_formKey.currentState!.validate()) {
-                      print('valid');
+              ),
+              TextFormField(
+                  controller: passwordController,
+                  decoration: const InputDecoration(
+                      border: UnderlineInputBorder(), labelText: '비밀번호'),
+                  obscureText: true),
+              SizedBox(height: 20),
+              ElevatedButton(
+                style: style,
+                onPressed: () async {
+                  dynamic user = await auth.signUpWithEmailPassword(
+                      emailController.text, passwordController.text);
+                  if (user != null) {
+                    dynamic signupSuccess = await signUp(
+                        user.uid,
+                        nameController.text,
+                        emailController.text,
+                        passwordController.text);
+                    if (signupSuccess) {
+                      if (!mounted) return;
+                      context.go('/');
                     }
                   }
                 },
+                child: const Text('회원 가입'),
               ),
-            ),
-            TextFormField(
-                controller: passwordController,
-                decoration: const InputDecoration(
-                    border: UnderlineInputBorder(), labelText: '비밀번호'),
-                obscureText: true),
-            SizedBox(height: 20),
-            ElevatedButton(
-              style: style,
-              onPressed: () async {
-                dynamic user = await auth.signUpWithEmailPassword(
-                    emailController.text, passwordController.text);
-                if (user != null) {
-                  print(user);
-                  dynamic result = await signUp(user.uid, nameController.text,
-                      emailController.text, passwordController.text);
-                  if (result) {
-                    print('회원가입완료');
-                  }
-                }
-              },
-              child: const Text('회원 가입'),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -1,9 +1,29 @@
 import 'package:flutter/material.dart';
-import 'src/login.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'package:go_router/go_router.dart';
+import 'src/login.dart';
+import 'src/signup.dart';
+
+// GoRouter configuration
+final _router = GoRouter(
+  routes: [
+    GoRoute(
+      path: '/',
+      builder: (context, state) => Main(),
+    ),
+    GoRoute(
+      path: '/login',
+      builder: (context, state) => Login(),
+    ),
+    GoRoute(
+      path: '/signup',
+      builder: (context, state) => Signup(),
+    ),
+  ],
+);
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,7 +38,9 @@ class CafeMenuApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: Main());
+    return MaterialApp.router(
+      routerConfig: _router,
+    );
   }
 }
 
@@ -49,12 +71,7 @@ class _Main extends State<Main> {
           icon: const Icon(Icons.account_circle),
           tooltip: 'login',
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute<void>(
-              builder: (BuildContext context) {
-                return Scaffold(
-                    appBar: AppBar(title: const Text('로그인')), body: Login());
-              },
-            ));
+            context.push('/login');
           },
         ),
       ]),
