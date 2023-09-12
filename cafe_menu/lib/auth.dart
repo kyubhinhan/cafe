@@ -1,26 +1,31 @@
-import 'package:cafe_menu/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'dart:async';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  Future signInAnon() async {
-    try {
-      UserCredential result = await _auth.signInAnonymously();
-      User? user = result.user;
-      return _userFromFirebaseUser(user);
-    } catch (e) {
-      print(e.toString());
-      return null;
-    }
-  }
-
-  Future signUpWithEmailPassword(email, password) async {
+  Future signUp(email, password, name) async {
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
+
       User? user = result.user;
-      return _userFromFirebaseUser(user);
+      if (user != null) {
+        await http.post(
+          Uri.parse('http://10.0.2.2:5000/signup'),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(<String, String>{
+            'uid': user.uid,
+            'name': name,
+            'email': email,
+            'password': password
+          }),
+        );
+      }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         print('The password provided is too weak.');
@@ -45,8 +50,8 @@ class AuthService {
       }
     }
   }
-}
 
-UserModel? _userFromFirebaseUser(User? user) {
-  return user != null ? UserModel(uid: user.uid) : null;
+  Stream authStateChanges() {
+    return _auth.authStateChanges();
+  }
 }

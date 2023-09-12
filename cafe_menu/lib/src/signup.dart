@@ -88,19 +88,11 @@ class _Signup extends State<Signup> {
               ElevatedButton(
                 style: style,
                 onPressed: () async {
-                  dynamic user = await auth.signUpWithEmailPassword(
-                      emailController.text, passwordController.text);
-                  if (user != null) {
-                    dynamic signupSuccess = await signUp(
-                        user.uid,
-                        nameController.text,
-                        emailController.text,
-                        passwordController.text);
-                    if (signupSuccess) {
-                      if (!mounted) return;
-                      context.go('/');
-                    }
-                  }
+                  await auth.signUp(emailController.text,
+                      passwordController.text, nameController.text);
+
+                  if (!mounted) return;
+                  context.go('/');
                 },
                 child: const Text('회원 가입'),
               ),
@@ -118,27 +110,6 @@ Future<bool> checkDuplicate(email) async {
 
   if (response.statusCode == 200) {
     return Duplicate.fromJson(jsonDecode(response.body)).isDuplicate;
-  } else {
-    throw Exception('Failed to check duplicate');
-  }
-}
-
-Future<bool> signUp(uid, name, email, password) async {
-  final response = await http.post(
-    Uri.parse('http://10.0.2.2:5000/signup'),
-    headers: <String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-    },
-    body: jsonEncode(<String, String>{
-      'uid': uid,
-      'name': name,
-      'email': email,
-      'password': password
-    }),
-  );
-
-  if (response.statusCode == 200) {
-    return true;
   } else {
     throw Exception('Failed to check duplicate');
   }

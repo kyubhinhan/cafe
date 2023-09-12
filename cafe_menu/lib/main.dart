@@ -4,8 +4,11 @@ import 'package:http/http.dart' as http;
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+
 import 'src/login.dart';
 import 'src/signup.dart';
+import 'auth.dart';
 
 // GoRouter configuration
 final _router = GoRouter(
@@ -30,7 +33,14 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(CafeMenuApp());
+  runApp(MultiProvider(
+    providers: [
+      StreamProvider(
+          create: (context) => AuthService().authStateChanges(),
+          initialData: null),
+    ],
+    child: CafeMenuApp(),
+  ));
 }
 
 class CafeMenuApp extends StatelessWidget {
