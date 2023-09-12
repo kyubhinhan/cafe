@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -33,12 +34,9 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(MultiProvider(
-    providers: [
-      StreamProvider(
-          create: (context) => AuthService().authStateChanges(),
-          initialData: null),
-    ],
+  runApp(StreamProvider(
+    create: (context) => FirebaseAuth.instance.authStateChanges(),
+    initialData: null,
     child: CafeMenuApp(),
   ));
 }
@@ -75,47 +73,53 @@ class _Main extends State<Main> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(_appBarTitle), actions: <Widget>[
-        IconButton(
-          icon: const Icon(Icons.account_circle),
-          tooltip: 'login',
-          onPressed: () {
-            context.push('/login');
+    dynamic user = Provider.of<User?>(context);
+    print(user);
+    if (user != null) {
+      return Text('done');
+    } else {
+      return Scaffold(
+        appBar: AppBar(title: Text(_appBarTitle), actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.account_circle),
+            tooltip: 'login',
+            onPressed: () {
+              context.push('/login');
+            },
+          ),
+        ]),
+        body: FutureBuilder<Album>(
+          future: futureAlbum,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return Text(snapshot.data!.title);
+            } else if (snapshot.hasError) {
+              return Text('${snapshot.error}');
+            }
+            // By default, show a loading spinner.
+            return const CircularProgressIndicator();
           },
         ),
-      ]),
-      body: FutureBuilder<Album>(
-        future: futureAlbum,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return Text(snapshot.data!.title);
-          } else if (snapshot.hasError) {
-            return Text('${snapshot.error}');
-          }
-          // By default, show a loading spinner.
-          return const CircularProgressIndicator();
-        },
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.business),
-            label: 'Business',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.school),
-            label: 'School',
-          ),
-        ],
-        currentIndex: 0,
-        selectedItemColor: Colors.amber[800],
-      ),
-    );
+        bottomNavigationBar: BottomNavigationBar(
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.business),
+              label: 'Business',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.school),
+              label: 'School',
+            ),
+          ],
+          currentIndex: 0,
+          selectedItemColor: Colors.amber[800],
+        ),
+      );
+    }
   }
 }
 

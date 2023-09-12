@@ -53,6 +53,9 @@ class _Login extends State<Login> {
                   dynamic credencial = await auth.signInWithEmailPassword(
                       idController.text, passwordController.text);
                   print(credencial);
+
+                  if (!mounted) return;
+                  context.go('/');
                 },
                 child: const Text('로그인'),
               ),

@@ -50,8 +50,4 @@ class AuthService {
       }
     }
   }
-
-  Stream authStateChanges() {
-    return _auth.authStateChanges();
-  }
 }
