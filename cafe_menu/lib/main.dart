@@ -92,7 +92,7 @@ class _Main extends State<Main> {
           menuChildren: <Widget>[
             MenuItemButton(
               child: Text('로그아웃'),
-              onPressed: () => {print('hi')},
+              onPressed: () => {FirebaseAuth.instance.signOut()},
             )
           ],
         ),
