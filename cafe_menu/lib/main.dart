@@ -1,16 +1,53 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'src/login.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
-void main() => runApp(const CafeMenuApp());
+import 'src/login.dart';
+import 'src/signup.dart';
+
+// GoRouter configuration
+final _router = GoRouter(
+  routes: [
+    GoRoute(
+      path: '/',
+      builder: (context, state) => Main(),
+    ),
+    GoRoute(
+      path: '/login',
+      builder: (context, state) => Login(),
+    ),
+    GoRoute(
+      path: '/signup',
+      builder: (context, state) => Signup(),
+    ),
+  ],
+);
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  runApp(StreamProvider(
+    create: (context) => FirebaseAuth.instance.authStateChanges(),
+    initialData: null,
+    child: CafeMenuApp(),
+  ));
+}
 
 class CafeMenuApp extends StatelessWidget {
   const CafeMenuApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: Main());
+    return MaterialApp.router(
+      routerConfig: _router,
+    );
   }
 }
 
@@ -35,19 +72,29 @@ class _Main extends State<Main> {
 
   @override
   Widget build(BuildContext context) {
+    dynamic user = Provider.of<User?>(context);
     return Scaffold(
       appBar: AppBar(title: Text(_appBarTitle), actions: <Widget>[
-        IconButton(
-          icon: const Icon(Icons.account_circle),
-          tooltip: 'login',
-          onPressed: () {
-            Navigator.push(context, MaterialPageRoute<void>(
-              builder: (BuildContext context) {
-                return Scaffold(
-                    appBar: AppBar(title: const Text('로그인')), body: Login());
+        MenuAnchor(
+          builder: ((context, controller, child) => IconButton(
+              onPressed: () {
+                if (user == null) {
+                  context.push('/login');
+                } else {
+                  if (controller.isOpen) {
+                    controller.close();
+                  } else {
+                    controller.open();
+                  }
+                }
               },
-            ));
-          },
+              icon: Icon(Icons.account_circle))),
+          menuChildren: <Widget>[
+            MenuItemButton(
+              child: Text('로그아웃'),
+              onPressed: () => {FirebaseAuth.instance.signOut()},
+            )
+          ],
         ),
       ]),
       body: FutureBuilder<Album>(
@@ -58,7 +105,6 @@ class _Main extends State<Main> {
           } else if (snapshot.hasError) {
             return Text('${snapshot.error}');
           }
-
           // By default, show a loading spinner.
           return const CircularProgressIndicator();
         },

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>664960449406-jckfnbt0j8m1cadptqhf657p1p343odk.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.664960449406-jckfnbt0j8m1cadptqhf657p1p343odk</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBNfSXT1riZShcCEBv3BprVPlzQhIMEe3Q</string>
+	<key>GCM_SENDER_ID</key>
+	<string>664960449406</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.cafeMenu.RunnerTests</string>
+	<key>PROJECT_ID</key>
+	<string>cafetest-10779</string>
+	<key>STORAGE_BUCKET</key>
+	<string>cafetest-10779.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:664960449406:ios:1bf8efb11d71ff16f9d12f</string>
+</dict>
+</plist>
