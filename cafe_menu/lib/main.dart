@@ -9,7 +9,6 @@ import 'package:provider/provider.dart';
 
 import 'src/login.dart';
 import 'src/signup.dart';
-import 'auth.dart';
 
 // GoRouter configuration
 final _router = GoRouter(
@@ -74,52 +73,61 @@ class _Main extends State<Main> {
   @override
   Widget build(BuildContext context) {
     dynamic user = Provider.of<User?>(context);
-    print(user);
-    if (user != null) {
-      return Text('done');
-    } else {
-      return Scaffold(
-        appBar: AppBar(title: Text(_appBarTitle), actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.account_circle),
-            tooltip: 'login',
-            onPressed: () {
-              context.push('/login');
-            },
-          ),
-        ]),
-        body: FutureBuilder<Album>(
-          future: futureAlbum,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return Text(snapshot.data!.title);
-            } else if (snapshot.hasError) {
-              return Text('${snapshot.error}');
-            }
-            // By default, show a loading spinner.
-            return const CircularProgressIndicator();
-          },
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.business),
-              label: 'Business',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.school),
-              label: 'School',
-            ),
+    return Scaffold(
+      appBar: AppBar(title: Text(_appBarTitle), actions: <Widget>[
+        MenuAnchor(
+          builder: ((context, controller, child) => IconButton(
+              onPressed: () {
+                if (user == null) {
+                  context.push('/login');
+                } else {
+                  if (controller.isOpen) {
+                    controller.close();
+                  } else {
+                    controller.open();
+                  }
+                }
+              },
+              icon: Icon(Icons.account_circle))),
+          menuChildren: <Widget>[
+            MenuItemButton(
+              child: Text('로그아웃'),
+              onPressed: () => {print('hi')},
+            )
           ],
-          currentIndex: 0,
-          selectedItemColor: Colors.amber[800],
         ),
-      );
-    }
+      ]),
+      body: FutureBuilder<Album>(
+        future: futureAlbum,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return Text(snapshot.data!.title);
+          } else if (snapshot.hasError) {
+            return Text('${snapshot.error}');
+          }
+          // By default, show a loading spinner.
+          return const CircularProgressIndicator();
+        },
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.business),
+            label: 'Business',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.school),
+            label: 'School',
+          ),
+        ],
+        currentIndex: 0,
+        selectedItemColor: Colors.amber[800],
+      ),
+    );
   }
 }
 

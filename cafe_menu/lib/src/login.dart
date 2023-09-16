@@ -26,6 +26,7 @@ class _Login extends State<Login> {
     final AuthService auth = AuthService();
     final ButtonStyle style =
         ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 20));
+
     return Scaffold(
       appBar: AppBar(title: const Text('로그인')),
       body: Center(
