@@ -17,3 +17,10 @@ model User {
   name     String
   type     String
 }
+
+model Menu {
+  id    String @id @unique
+  name  String
+  price Int
+  img   String
+}
